@@ -1,5 +1,10 @@
 package cc.leevi.toutiao.model;
 
+import cc.leevi.toutiao.util.StringUtils;
+import org.apache.commons.lang3.RandomUtils;
+
+import java.util.UUID;
+
 /**
  * Created by jiang on 2017/5/3.
  */
@@ -10,15 +15,15 @@ public class QueryParam {
     private Long last_refresh_sub_entrance_interval = System.currentTimeMillis() / 1000;
     private Integer loc_mode = 8;
     private Long loc_time = System.currentTimeMillis() / 1000;
-    private Double latitude = 39.94249398492039;
-    private Double longitude = 116.50137913853295;
-    private String city = "北京";
+    private Double latitude = StringUtils.randomLat();
+    private Double longitude = StringUtils.randomLon();
+    private String city = "上海";
     private String tt_from = "pre_load_more";//pre_load_more
-    private Integer lac = 4313;
-    private String cid = "65498";
-    private String cp = "5599039b7ecd8q1";
-    private String iid = "9690476840";
-    private String device_id = "35407490883";
+    private Integer lac = 1234;
+    private String cid = String.valueOf(RandomUtils.nextInt(1000,9999));
+    private String cp = String.valueOf(RandomUtils.nextInt(1000,9999));
+    private String iid = String.valueOf(RandomUtils.nextLong(10000000,999999999));
+    private String device_id = String.valueOf(RandomUtils.nextInt(100000,1000000));
     private String ac = "wifi";
     private String channel = "huawei";
     private String aid = "13";
@@ -26,7 +31,7 @@ public class QueryParam {
     private Integer version_code = 611;
     private String version_name = "6.1.1";
     private String device_platform = "android";
-    private String ab_version = "121236,123183,112577,115758,122834,119379,113607,123188,123184,121885,113608,119887,123600,123490,123565,104324,123176,112578,123463,122590,122948,116921,117942,31648,122932,123574,121006,122931,114338";
+    private String ab_version = "";
     private String ab_client = "a1,c4,e1,f2,g2,f7";
     private String ab_feature = "102749,94563";
     private Integer abflag = 3;
@@ -36,8 +41,8 @@ public class QueryParam {
     private String language = "zh";
     private Integer os_api = 24;
     private String os_version = "7.0";
-    private String uuid = "869394027918041";
-    private String openudid = "7c22e8012094037d";
+    private String uuid = UUID.randomUUID().toString().replace("-","");
+    private String openudid = UUID.randomUUID().toString().replace("-","");
     private Integer manifest_version_code = 611;
     private String resolution = "1080*1832";
     private Integer dpi = 480;
@@ -354,5 +359,8 @@ public class QueryParam {
 
     public void set_rticket(Long _rticket) {
         this._rticket = _rticket;
+    }
+
+    public QueryParam() {
     }
 }

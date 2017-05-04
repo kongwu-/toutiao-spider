@@ -3,11 +3,13 @@ package cc.leevi.toutiao.util;
 import com.github.kevinsawicki.http.HttpRequest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by jiang on 2017-05-03.
@@ -17,6 +19,34 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static String buildUrl(String url, Map<String,Object> params,boolean encode){
         url = append(url, params);
         return encode ? encode(url) : url;
+    }
+
+    public static Double randomLon(){
+        return randomLonLat(97.574061,117.222374,23.53827,41.596479,"Lon");
+    }
+
+    public static Double randomLat(){
+        return randomLonLat(97.574061,117.222374,23.53827,41.596479,"Lat");
+    }
+
+    /**
+     * @Title: randomLonLat
+     * @Description: 在矩形内随机生成经纬度
+     * @param MinLon：最新经度  MaxLon： 最大经度   MinLat：最新纬度   MaxLat：最大纬度    type：设置返回经度还是纬度
+     * @return
+     * @throws
+     */
+    public static Double randomLonLat(double MinLon, double MaxLon, double MinLat, double MaxLat, String type) {
+        Random random = new Random();
+        BigDecimal db = new BigDecimal(Math.random() * (MaxLon - MinLon) + MinLon);
+        Double lon = db.setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();// 小数后6位
+        db = new BigDecimal(Math.random() * (MaxLat - MinLat) + MinLat);
+        Double lat = db.setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();
+        if (type.equals("Lon")) {
+            return lon;
+        } else {
+            return lat;
+        }
     }
 
     public static String append(String url, Map<String,Object> params){
@@ -101,4 +131,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             throw new HttpRequest.HttpRequestException(io);
         }
     }
+
+
+
 }
