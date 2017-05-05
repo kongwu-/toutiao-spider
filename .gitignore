@@ -83,6 +83,4 @@ buildNumber.properties
 .idea/kotlinc.xml
 .idea/misc.xml
 .idea/modules.xml
-src/main/java/cc/leevi/toutiao/mapper/
-src/test/resources/
 toutiao-spider.iml
