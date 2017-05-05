@@ -1,17 +1,14 @@
 package cc.leevi.toutiao.process;
 
+import cc.leevi.toutiao.ThreadPoolExecutor;
 import cc.leevi.toutiao.model.Plan;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by jiang on 2017/5/3.
@@ -19,16 +16,12 @@ import java.util.concurrent.ThreadFactory;
 @Component
 public class SpiderManager {
 
-    Map<String,ThreadPoolTaskExecutor> executors = new HashMap<>();
+    Map<String,ThreadPoolExecutor> executors = new HashMap<>();
 
-    private int threadNum = 10;
+    private int threadNum = 5;
 
-    private ThreadPoolTaskExecutor newExecutor(){
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(100);
-        executor.setQueueCapacity(1000);
-        executor.initialize();
+    private ThreadPoolExecutor newExecutor(){
+        ThreadPoolExecutor executor = new ThreadPoolExecutor();
         return executor;
     }
 
@@ -38,18 +31,30 @@ public class SpiderManager {
     }
 
     /**
+     * 删除计划
+     * @param plan
+     */
+    public void stopPlan(Plan plan){
+        ThreadPoolExecutor executor = executors.get(String.valueOf(plan.getId()));
+        if(executor!=null){
+            executor.shutdown();
+        }
+        executors.remove(plan.getId());
+    }
+
+    /**
      * 新建计划
      * @param plan
      */
-    public void newPlan(Plan plan){
-        ThreadPoolTaskExecutor executor = newExecutor();
+    public void startPlan(Plan plan){
+        ThreadPoolExecutor executor = newExecutor();
+
         for(int i = 0;i<threadNum;i++){
-            Spider spider = new Spider(plan.getSource(),plan.getKeywords());
+            Spider spider = new Spider(plan);
             executor.execute(spider);
         }
         executors.put(String.valueOf(plan.getId()),executor);
     }
-
 
     @PreDestroy
     public void stop(){

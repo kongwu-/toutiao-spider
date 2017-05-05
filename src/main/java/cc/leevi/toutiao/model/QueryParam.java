@@ -17,7 +17,7 @@ public class QueryParam {
     private Long loc_time = System.currentTimeMillis() / 1000;
     private Double latitude = StringUtils.randomLat();
     private Double longitude = StringUtils.randomLon();
-    private String city = "北京";
+    private String city = StringUtils.randomCity();
     private String tt_from = "pre_load_more";//pre_load_more
     private Integer lac = 1234;
     private String cid = String.valueOf(RandomUtils.nextInt(1000,9999));
@@ -30,7 +30,7 @@ public class QueryParam {
     private String app_name = "news_article";
     private Integer version_code = 611;
     private String version_name = "6.1.1";
-    private String device_platform = "android";
+    private String device_platform = "ios";
     private String ab_version = "";
     private String ab_client = "a1,c4,e1,f2,g2,f7";
     private String ab_feature = "102749,94563";

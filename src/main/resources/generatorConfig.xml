@@ -5,7 +5,7 @@
 <generatorConfiguration>
 
     <!-- !!!! Driver Class Path !!!! -->
-    <classPathEntry location="C:\Users\jiang\.m2\repository\mysql\mysql-connector-java\5.1.37\mysql-connector-java-5.1.37.jar"/>
+    <classPathEntry location="C:\Users\jiang\.m2\repository\mysql\mysql-connector-java\5.1.38\mysql-connector-java-5.1.38.jar"/>
 
     <context id="context" targetRuntime="MyBatis3">
         <commentGenerator>
@@ -23,22 +23,22 @@
         </javaTypeResolver>
 
         <!-- !!!! Model Configurations !!!! -->
-        <javaModelGenerator targetPackage="cc.leevi.toutiao.model" targetProject="D:\idea_workspace\toutiao-spider\src\main\java">
+        <javaModelGenerator targetPackage="cc.leevi.toutiao.model" targetProject="D:\github_workspace\toutiao-spider\src\main\java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
         <!-- !!!! Mapper XML Configurations !!!! -->
-        <sqlMapGenerator targetPackage="mapper" targetProject="D:\idea_workspace\toutiao-spider\src\main\resources">
+        <sqlMapGenerator targetPackage="mapper" targetProject="D:\github_workspace\toutiao-spider\src\main\resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
         <!-- !!!! Mapper Interface Configurations !!!! -->
-        <javaClientGenerator targetPackage="cc.leevi.toutiao.mapper" targetProject="D:\idea_workspace\toutiao-spider\src\main\java" type="XMLMAPPER">
+        <javaClientGenerator targetPackage="cc.leevi.toutiao.mapper" targetProject="D:\github_workspace\toutiao-spider\src\main\java" type="XMLMAPPER">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
         <!-- !!!! Table Configurations !!!! -->
-        <table tableName="t_plan" domainObjectName="Plan"/>
+        <table tableName="t_plan_data" domainObjectName="PlanData"/>
     </context>
 </generatorConfiguration>

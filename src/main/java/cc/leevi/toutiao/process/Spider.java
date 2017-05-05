@@ -1,21 +1,21 @@
 package cc.leevi.toutiao.process;
 
-import cc.leevi.toutiao.model.Content;
-import cc.leevi.toutiao.model.Data;
-import cc.leevi.toutiao.model.QueryParam;
-import cc.leevi.toutiao.model.QueryRoot;
+import cc.leevi.toutiao.model.*;
 import cc.leevi.toutiao.util.BeanUtils;
+import cc.leevi.toutiao.util.SpringContextUtil;
 import cc.leevi.toutiao.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jiang on 2017/5/4.
@@ -31,10 +31,15 @@ public class Spider implements Runnable{
 
     private Integer counter = 0;
 
+    private DataProcessor dataProcessor = SpringContextUtil.getBean(DataProcessor.class);
+
     /**
      * 关键词
      */
     private List<String> wordList;
+
+    private Plan plan;
+
 //    private OkHttpClient client = new OkHttpClient.Builder().proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress("127.0.0.1",1080))).build();
     private OkHttpClient client = new OkHttpClient();
     /**
@@ -57,8 +62,8 @@ public class Spider implements Runnable{
 
     @Override
     public void run() {
-        LOGGER.debug("来源：【{}】，关键词【{}】，当前线程：【{}】开始运行",source,StringUtils.join(wordList,","),Thread.currentThread().getName());
-        LOGGER.debug(Thread.currentThread().getName());
+        LOGGER.info("来源：【{}】，关键词【{}】，当前线程：【{}】开始运行",source,StringUtils.join(wordList,","),Thread.currentThread().getName());
+        LOGGER.info(Thread.currentThread().getName());
         QueryParam queryParam = null;
         while (!stopped){
             try {
@@ -72,7 +77,7 @@ public class Spider implements Runnable{
                 }
 
                 Map<String,Object> param = BeanUtils.bean2map(new QueryParam());
-                LOGGER.debug("当前线程：【{}】，正在抓取中",Thread.currentThread().getName());
+                LOGGER.info("当前线程：【{}】，正在抓取中",Thread.currentThread().getName());
                 String url = StringUtils.buildUrl(baseUrl,param,true);
                 Request request = new Request.Builder()
                         .url(url)
@@ -86,15 +91,16 @@ public class Spider implements Runnable{
                         if(StringUtils.isNotEmpty(source)&&source.equals(content.getSource())){
                             LOGGER.info(content.getTitle());
                             LOGGER.info("根据来源匹配到【来源({}){}】",content.getSource(),content.getTitle());
-                            //处理
+                            dataProcessor.add(plan.getId(),contentJson);
                         }else if(contains(content.getTitle())){
                             LOGGER.info("根据关键词匹配到【来源({}){}】",content.getSource(),content.getTitle());
-                            //处理
+                            dataProcessor.add(plan.getId(),contentJson);
                         }
                     }
                 }
                 counter++;
             }catch (Exception e){
+                e.printStackTrace();
                 LOGGER.error(ExceptionUtils.getStackTrace(e));
             }
         }
@@ -117,10 +123,11 @@ public class Spider implements Runnable{
         return false;
     }
 
-    public Spider(String source,String keywords) {
-        this.source = source;
-        if(StringUtils.isNotEmpty(keywords)){
-            this.wordList = Arrays.asList(StringUtils.split(keywords,","));
+    public Spider(Plan plan) {
+        this.plan = plan;
+        this.source = plan.getSource();
+        if(StringUtils.isNotEmpty(plan.getKeywords())){
+            this.wordList = Arrays.asList(StringUtils.split(plan.getKeywords(),","));
         }else{
             this.wordList = new ArrayList<>();
         }

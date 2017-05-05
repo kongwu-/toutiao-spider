@@ -1,12 +1,18 @@
 package cc.leevi.toutiao.task;
 
+import cc.leevi.toutiao.cache.Constant;
+import cc.leevi.toutiao.mapper.PlanMapper;
 import cc.leevi.toutiao.model.Plan;
+import cc.leevi.toutiao.model.PlanExample;
 import cc.leevi.toutiao.process.SpiderManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jiang on 2017/5/4.
@@ -17,16 +23,47 @@ public class PlanTask {
     @Autowired
     private SpiderManager spiderManager;
 
+    @Autowired
+    private PlanMapper planMapper;
+
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    @Scheduled(fixedRate = 5000000)
+    @Scheduled(fixedRate = 10000)
     public void refresh() {
-        LOGGER.info("---------------------------------------refresh");
-        Plan plan = new Plan();
-        plan.setSource("京东");
-        plan.setId(1);
-//        plan.setKeywords("信用卡,汽车,贷款,神器,炒股,房价,经历,付款,面子,舒服,免费,震惊,抢购,满意");
-        plan.setKeywords("办卡,额度,信用卡");
-        spiderManager.newPlan(plan);
+        executePendingPlan();
+    }
+
+
+    /**
+     * 执行待处理的计划
+     */
+    private void executePendingPlan(){
+        List<Plan> planList = getPendingPlan();
+        LOGGER.info("本次待处理计划{}条",planList.size());
+        for(Plan plan : planList){
+            if(Constant.PLAN_STATUS_TORUN.equals(plan.getStatus())){
+                spiderManager.startPlan(plan);
+                plan.setStatus(Constant.PLAN_STATUS_RUNNING);
+                planMapper.updateByPrimaryKeySelective(plan);
+            }
+            if(Constant.PLAN_STATUS_TOSTOP.equals(plan.getStatus())){
+                spiderManager.stopPlan(plan);
+                plan.setStatus(Constant.PLAN_STATUS_STOPPED);
+                planMapper.updateByPrimaryKeySelective(plan);
+            }
+        }
+    }
+
+    /**
+     * 获取待处理的计划
+     * @return
+     */
+    private List<Plan> getPendingPlan(){
+        PlanExample planExample = new PlanExample();
+        List<String> statusList = new ArrayList();
+        statusList.add(Constant.PLAN_STATUS_TORUN);
+        statusList.add(Constant.PLAN_STATUS_TOSTOP);
+        planExample.createCriteria().andStatusIn(statusList);
+        return planMapper.selectByExample(planExample);
     }
 }
