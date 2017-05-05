@@ -28,6 +28,9 @@ public class Spider implements Runnable{
      * 要抓取的广告来源名称
      */
     private String source;
+
+    private Integer counter = 0;
+
     /**
      * 关键词
      */
@@ -56,9 +59,19 @@ public class Spider implements Runnable{
     public void run() {
         LOGGER.debug("来源：【{}】，关键词【{}】，当前线程：【{}】开始运行",source,StringUtils.join(wordList,","),Thread.currentThread().getName());
         LOGGER.debug(Thread.currentThread().getName());
-        Map<String,Object> param = BeanUtils.bean2map(new QueryParam());
+        QueryParam queryParam = null;
         while (!stopped){
             try {
+                if(counter%20==0){
+                    counter = 0;
+                    queryParam = new QueryParam();
+                }else{
+                    queryParam.setLoc_time(System.currentTimeMillis()/1000);
+                    queryParam.setMin_behot_time(System.currentTimeMillis()/1000);
+                    queryParam.set_rticket(System.currentTimeMillis());
+                }
+
+                Map<String,Object> param = BeanUtils.bean2map(new QueryParam());
                 LOGGER.debug("当前线程：【{}】，正在抓取中",Thread.currentThread().getName());
                 String url = StringUtils.buildUrl(baseUrl,param,true);
                 Request request = new Request.Builder()
@@ -71,14 +84,16 @@ public class Spider implements Runnable{
                     Content content = JSON.parseObject(contentJson,Content.class);
                     if(adLabel.equals(content.getLabel())){
                         if(StringUtils.isNotEmpty(source)&&source.equals(content.getSource())){
-                            LOGGER.debug("根据来源匹配到【来源({}){}】",content.getSource(),content.getTitle());
+                            LOGGER.info(content.getTitle());
+                            LOGGER.info("根据来源匹配到【来源({}){}】",content.getSource(),content.getTitle());
                             //处理
                         }else if(contains(content.getTitle())){
-                            LOGGER.debug("根据关键词匹配到【来源({}){}】",content.getSource(),content.getTitle());
+                            LOGGER.info("根据关键词匹配到【来源({}){}】",content.getSource(),content.getTitle());
                             //处理
                         }
                     }
                 }
+                counter++;
             }catch (Exception e){
                 LOGGER.error(ExceptionUtils.getStackTrace(e));
             }
@@ -105,7 +120,7 @@ public class Spider implements Runnable{
     public Spider(String source,String keywords) {
         this.source = source;
         if(StringUtils.isNotEmpty(keywords)){
-            this.wordList = Arrays.asList(StringUtils.split(keywords));
+            this.wordList = Arrays.asList(StringUtils.split(keywords,","));
         }else{
             this.wordList = new ArrayList<>();
         }

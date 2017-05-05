@@ -17,7 +17,7 @@ public class QueryParam {
     private Long loc_time = System.currentTimeMillis() / 1000;
     private Double latitude = StringUtils.randomLat();
     private Double longitude = StringUtils.randomLon();
-    private String city = "上海";
+    private String city = "北京";
     private String tt_from = "pre_load_more";//pre_load_more
     private Integer lac = 1234;
     private String cid = String.valueOf(RandomUtils.nextInt(1000,9999));

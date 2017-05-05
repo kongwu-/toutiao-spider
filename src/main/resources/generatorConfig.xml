@@ -15,30 +15,30 @@
 
         <!-- !!!! Database Configurations !!!! -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/video" userId="root"
-                        password="root"/>
+                        connectionURL="jdbc:mysql://rm-uf6f3bxhz9i3v650vo.mysql.rds.aliyuncs.com:3306/example" userId="root"
+                        password="Jiangxin1035"/>
 
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
         <!-- !!!! Model Configurations !!!! -->
-        <javaModelGenerator targetPackage="cc.leevi.model" targetProject="D:\idea_workspace\video-web\src\main\java">
+        <javaModelGenerator targetPackage="cc.leevi.toutiao.model" targetProject="D:\idea_workspace\toutiao-spider\src\main\java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
         <!-- !!!! Mapper XML Configurations !!!! -->
-        <sqlMapGenerator targetPackage="mapper" targetProject="D:\idea_workspace\video-web\src\main\resources">
+        <sqlMapGenerator targetPackage="mapper" targetProject="D:\idea_workspace\toutiao-spider\src\main\resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
         <!-- !!!! Mapper Interface Configurations !!!! -->
-        <javaClientGenerator targetPackage="cc.leevi.mapper" targetProject="D:\idea_workspace\video-web\src\main\java" type="XMLMAPPER">
+        <javaClientGenerator targetPackage="cc.leevi.toutiao.mapper" targetProject="D:\idea_workspace\toutiao-spider\src\main\java" type="XMLMAPPER">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
         <!-- !!!! Table Configurations !!!! -->
-        <table tableName="t_resource" domainObjectName="Resource"/>
+        <table tableName="t_plan" domainObjectName="Plan"/>
     </context>
 </generatorConfiguration>
